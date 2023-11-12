@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Icon Finder</title>
+    <style>
+      .container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        margin-top: 2rem;
+        background-position: center;
+        background-size: cover;
+        background-repeat: no-repeat;
+      }
+      .search {
+        width: 300px;
+        height: 30px;
+        font-size: 20px;
+      }
+      .searchBtn {
+        height: 30px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div>
+        <input type="search" class="search" placeholder="Search..." />
+        <button class="searchBtn">Search</button>
+      </div>
+      <div
+        class="imgs-container"
+        style="
+          display: flex;
+          gap: 1rem;
+          margin-top: 2rem;
+          max-width: 1000px;
+          flex-wrap: wrap;
+        "
+      >
+        <div
+          style="
+            width: 200px;
+            height: 200px;
+            border: 1px solid #eee;
+            padding: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+          "
+        >
+          <img alt="image" />
+        </div>
+        <div
+          style="
+            width: 200px;
+            height: 200px;
+            border: 1px solid #eee;
+            padding: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+          "
+        >
+          <img alt="image" />
+        </div>
+        <div
+          style="
+            width: 200px;
+            height: 200px;
+            border: 1px solid #eee;
+            padding: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+          "
+        >
+          <img alt="image" />
+        </div>
+        <div
+          style="
+            width: 200px;
+            height: 200px;
+            border: 1px solid #eee;
+            padding: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+          "
+        >
+          <img alt="image" />
+        </div>
+        <div
+          style="
+            width: 200px;
+            height: 200px;
+            border: 1px solid #eee;
+            padding: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+          "
+        >
+          <img alt="image" />
+        </div>
+        <div
+          style="
+            width: 200px;
+            height: 200px;
+            border: 1px solid #eee;
+            padding: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+          "
+        >
+          <img alt="image" />
+        </div>
+        <div
+          style="
+            width: 200px;
+            height: 200px;
+            border: 1px solid #eee;
+            padding: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+          "
+        >
+          <img alt="image" />
+        </div>
+        <div
+          style="
+            width: 200px;
+            height: 200px;
+            border: 1px solid #eee;
+            padding: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+          "
+        >
+          <img alt="image" />
+        </div>
+        <div
+          style="
+            width: 200px;
+            height: 200px;
+            border: 1px solid #eee;
+            padding: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+          "
+        >
+          <img alt="image" />
+        </div>
+        <div
+          style="
+            width: 200px;
+            height: 200px;
+            border: 1px solid #eee;
+            padding: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+          "
+        >
+          <img alt="image" />
+        </div>
+      </div>
+    </div>
+  </body>
+  <script>
+    const searchInput = document.querySelector(".search");
+    const searchBtn = document.querySelector(".searchBtn");
+    const imgs = document.querySelectorAll(".imgs-container div img");
+    let urlsArray = [];
+
+    // General Settings
+    const apiKey =
+      "YFBOmBBPCeZ1fVdk3rS9n13a6sXP3nATAMSb6govIV7vH4qbZ4GWu3t5k7jFIGCW";
+    const options = {
+      method: "GET",
+      headers: {
+        accept: "application/json",
+        Authorization: `Bearer ${apiKey}`,
+      },
+    };
+
+    // Click Action
+    searchBtn.addEventListener("click", () => {
+      try {
+        fetchAllData();
+      } catch (error) {
+        console.log(error.message);
+      }
+    });
+
+    // Get All Icons
+    async function fetchAllData() {
+      imgs.forEach((item) => {
+        item.src = "";
+      });
+      urlsArray = [];
+      const targetUrl = `https://api.iconfinder.com/v4/icons/search?query=${searchInput.value}&count=10`;
+      await fetch(targetUrl, options)
+        .then((response) => response.json())
+        .then((data) => {
+          // console.log(data.icons);
+          data.icons.forEach((item) => {
+            getIconData(item.icon_id);
+          });
+        })
+        .catch((err) => console.error(err));
+    }
+
+    // Get Icon
+    async function getIconData(id) {
+      const targetUrl = `https://api.iconfinder.com/v4/icons/${id}`;
+      await fetch(targetUrl, options)
+        .then((response) => response.json())
+        .then((data) => {
+          let resultData = data.raster_sizes[6].formats[0].preview_url;
+          urlsArray.push(resultData);
+          for (let i = 0; i < imgs.length; i++) {
+            for (let j = i; j < urlsArray.length; j++) {
+              imgs[i].src = urlsArray[j];
+              break;
+            }
+          }
+        })
+        .catch((err) => console.error(err));
+    }
+  </script>
+</html>
