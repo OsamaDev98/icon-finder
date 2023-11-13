@@ -15,163 +15,71 @@
         background-size: cover;
         background-repeat: no-repeat;
       }
+      .flex-style {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-wrap: wrap;
+      }
       .search {
         width: 280px;
         height: 30px;
         font-size: 20px;
+        padding: 5px;
       }
       .searchBtn {
         height: 30px;
+      }
+      .wrapper-img {
+        width: 180px;
+        height: 180px;
+        border: 1px solid #eee;
+        padding: 5px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
       }
     </style>
   </head>
   <body>
     <div class="container">
-      <div>
+      <div class="flex-style" style="gap: 10px">
         <input type="search" class="search" placeholder="Search..." />
         <button class="searchBtn">Search</button>
       </div>
       <div
-        class="imgs-container"
-        style="
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          gap: 1rem;
-          margin-top: 2rem;
-          max-width: 1000px;
-          flex-wrap: wrap;
-        "
+        class="flex-style imgs-container"
+        style="gap: 1rem; margin-top: 2rem; max-width: 1000px"
       >
-        <div
-          style="
-            width: 180px;
-            height: 180px;
-            border: 1px solid #eee;
-            padding: 5px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-          "
-        >
-          <img alt="image" />
+        <div class="wrapper-img">
+          <img alt="image" loading="lazy" />
         </div>
-        <div
-          style="
-            width: 180px;
-            height: 180px;
-            border: 1px solid #eee;
-            padding: 5px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-          "
-        >
-          <img alt="image" />
+        <div class="wrapper-img">
+          <img alt="image" loading="lazy" />
         </div>
-        <div
-          style="
-            width: 180px;
-            height: 180px;
-            border: 1px solid #eee;
-            padding: 5px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-          "
-        >
-          <img alt="image" />
+        <div class="wrapper-img">
+          <img alt="image" loading="lazy" />
         </div>
-        <div
-          style="
-            width: 180px;
-            height: 180px;
-            border: 1px solid #eee;
-            padding: 5px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-          "
-        >
-          <img alt="image" />
+        <div class="wrapper-img">
+          <img alt="image" loading="lazy" />
         </div>
-        <div
-          style="
-            width: 180px;
-            height: 180px;
-            border: 1px solid #eee;
-            padding: 5px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-          "
-        >
-          <img alt="image" />
+        <div class="wrapper-img">
+          <img alt="image" loading="lazy" />
         </div>
-        <div
-          style="
-            width: 180px;
-            height: 180px;
-            border: 1px solid #eee;
-            padding: 5px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-          "
-        >
-          <img alt="image" />
+        <div class="wrapper-img">
+          <img alt="image" loading="lazy" />
         </div>
-        <div
-          style="
-            width: 180px;
-            height: 180px;
-            border: 1px solid #eee;
-            padding: 5px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-          "
-        >
-          <img alt="image" />
+        <div class="wrapper-img">
+          <img alt="image" loading="lazy" />
         </div>
-        <div
-          style="
-            width: 180px;
-            height: 180px;
-            border: 1px solid #eee;
-            padding: 5px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-          "
-        >
-          <img alt="image" />
+        <div class="wrapper-img">
+          <img alt="image" loading="lazy" />
         </div>
-        <div
-          style="
-            width: 180px;
-            height: 180px;
-            border: 1px solid #eee;
-            padding: 5px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-          "
-        >
-          <img alt="image" />
+        <div class="wrapper-img">
+          <img alt="image" loading="lazy" />
         </div>
-        <div
-          style="
-            width: 180px;
-            height: 180px;
-            border: 1px solid #eee;
-            padding: 5px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-          "
-        >
-          <img alt="image" />
+        <div class="wrapper-img">
+          <img alt="image" loading="lazy" />
         </div>
       </div>
     </div>
@@ -194,15 +102,22 @@
       },
     };
 
-    // Click Action
+    // Search Button Action
     searchBtn.addEventListener("click", () => {
       fetchAllData();
+    });
+
+    // Reset Images
+    imgs.forEach((item) => {
+      item.src = "";
+      item.style.display = "none";
     });
 
     // Get All Icons
     async function fetchAllData() {
       imgs.forEach((item) => {
         item.src = "";
+        item.style.display = "none";
       });
       urlsArray = [];
       const targetUrl = `https://api.iconfinder.com/v4/icons/search?query=${searchInput.value}&count=10`;
@@ -210,13 +125,14 @@
         await fetch(targetUrl, options)
           .then((response) => response.json())
           .then((data) => {
-            // console.log(data.icons);
+            console.log(data.icons);
             data.icons.forEach((item) => {
               let resultData = item.raster_sizes[6].formats[0].preview_url;
               urlsArray.push(resultData);
               for (let i = 0; i < imgs.length; i++) {
                 for (let j = i; j < urlsArray.length; j++) {
                   imgs[i].src = urlsArray[j];
+                  imgs[i].style.display = "block";
                   break;
                 }
               }
@@ -228,6 +144,7 @@
       }
     }
 
+    // Click Image Action
     imgs.forEach((img) => {
       img.addEventListener("click", () => {
         console.log(img.src);
