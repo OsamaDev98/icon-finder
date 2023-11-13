@@ -16,7 +16,7 @@
         background-repeat: no-repeat;
       }
       .search {
-        width: 300px;
+        width: 280px;
         height: 30px;
         font-size: 20px;
       }
@@ -45,8 +45,8 @@
       >
         <div
           style="
-            width: 200px;
-            height: 200px;
+            width: 180px;
+            height: 180px;
             border: 1px solid #eee;
             padding: 5px;
             display: flex;
@@ -58,8 +58,8 @@
         </div>
         <div
           style="
-            width: 200px;
-            height: 200px;
+            width: 180px;
+            height: 180px;
             border: 1px solid #eee;
             padding: 5px;
             display: flex;
@@ -71,8 +71,8 @@
         </div>
         <div
           style="
-            width: 200px;
-            height: 200px;
+            width: 180px;
+            height: 180px;
             border: 1px solid #eee;
             padding: 5px;
             display: flex;
@@ -84,8 +84,8 @@
         </div>
         <div
           style="
-            width: 200px;
-            height: 200px;
+            width: 180px;
+            height: 180px;
             border: 1px solid #eee;
             padding: 5px;
             display: flex;
@@ -97,8 +97,8 @@
         </div>
         <div
           style="
-            width: 200px;
-            height: 200px;
+            width: 180px;
+            height: 180px;
             border: 1px solid #eee;
             padding: 5px;
             display: flex;
@@ -110,8 +110,8 @@
         </div>
         <div
           style="
-            width: 200px;
-            height: 200px;
+            width: 180px;
+            height: 180px;
             border: 1px solid #eee;
             padding: 5px;
             display: flex;
@@ -123,8 +123,8 @@
         </div>
         <div
           style="
-            width: 200px;
-            height: 200px;
+            width: 180px;
+            height: 180px;
             border: 1px solid #eee;
             padding: 5px;
             display: flex;
@@ -136,8 +136,8 @@
         </div>
         <div
           style="
-            width: 200px;
-            height: 200px;
+            width: 180px;
+            height: 180px;
             border: 1px solid #eee;
             padding: 5px;
             display: flex;
@@ -149,8 +149,8 @@
         </div>
         <div
           style="
-            width: 200px;
-            height: 200px;
+            width: 180px;
+            height: 180px;
             border: 1px solid #eee;
             padding: 5px;
             display: flex;
@@ -162,8 +162,8 @@
         </div>
         <div
           style="
-            width: 200px;
-            height: 200px;
+            width: 180px;
+            height: 180px;
             border: 1px solid #eee;
             padding: 5px;
             display: flex;
@@ -181,6 +181,7 @@
     const searchBtn = document.querySelector(".searchBtn");
     const imgs = document.querySelectorAll(".imgs-container div img");
     let urlsArray = [];
+    const corsUrl = "https://cors-anywhere.herokuapp.com/";
 
     // General Settings
     const apiKey =
@@ -195,11 +196,7 @@
 
     // Click Action
     searchBtn.addEventListener("click", () => {
-      try {
-        fetchAllData();
-      } catch (error) {
-        console.log(error.message);
-      }
+      fetchAllData();
     });
 
     // Get All Icons
@@ -209,21 +206,32 @@
       });
       urlsArray = [];
       const targetUrl = `https://api.iconfinder.com/v4/icons/search?query=${searchInput.value}&count=10`;
-      await fetch(targetUrl, options, { mode: "cors" })
-        .then((response) => response.json())
-        .then((data) => {
-          data.icons.forEach((item) => {
-            let resultData = data.raster_sizes[6].formats[0].preview_url;
-            urlsArray.push(resultData);
-            for (let i = 0; i < imgs.length; i++) {
-              for (let j = i; j < urlsArray.length; j++) {
-                imgs[i].src = urlsArray[j];
-                break;
+      try {
+        await fetch(corsUrl + targetUrl, options)
+          .then((response) => response.json())
+          .then((data) => {
+            // console.log(data.icons);
+            data.icons.forEach((item) => {
+              let resultData = item.raster_sizes[6].formats[0].preview_url;
+              urlsArray.push(resultData);
+              for (let i = 0; i < imgs.length; i++) {
+                for (let j = i; j < urlsArray.length; j++) {
+                  imgs[i].src = urlsArray[j];
+                  break;
+                }
               }
-            }
-          });
-        })
-        .catch((err) => console.error(err));
+            });
+          })
+          .catch((err) => console.log("Fetch Error:", err.message));
+      } catch (error) {
+        console.log("Try Error:", error.message);
+      }
     }
+
+    imgs.forEach((img) => {
+      img.addEventListener("click", () => {
+        console.log(img.src);
+      });
+    });
   </script>
 </html>
