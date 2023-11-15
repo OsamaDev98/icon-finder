@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Icon Finder</title>
+    <title>IconFinder</title>
     <style>
       .container {
         display: flex;
@@ -30,14 +30,14 @@
       .searchBtn {
         height: 30px;
       }
-      .wrapper-img {
-        width: 180px;
-        height: 180px;
+      .imgs-container {
+        gap: 1rem;
+        margin-top: 2rem;
+        max-width: 1000px;
+      }
+      .imgs-container img {
         border: 1px solid #eee;
         padding: 5px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
       }
     </style>
   </head>
@@ -47,108 +47,58 @@
         <input type="search" class="search" placeholder="Search..." />
         <button class="searchBtn">Search</button>
       </div>
-      <div
-        class="flex-style imgs-container"
-        style="gap: 1rem; margin-top: 2rem; max-width: 1000px"
-      >
-        <div class="wrapper-img">
-          <img alt="image" loading="lazy" />
-        </div>
-        <div class="wrapper-img">
-          <img alt="image" loading="lazy" />
-        </div>
-        <div class="wrapper-img">
-          <img alt="image" loading="lazy" />
-        </div>
-        <div class="wrapper-img">
-          <img alt="image" loading="lazy" />
-        </div>
-        <div class="wrapper-img">
-          <img alt="image" loading="lazy" />
-        </div>
-        <div class="wrapper-img">
-          <img alt="image" loading="lazy" />
-        </div>
-        <div class="wrapper-img">
-          <img alt="image" loading="lazy" />
-        </div>
-        <div class="wrapper-img">
-          <img alt="image" loading="lazy" />
-        </div>
-        <div class="wrapper-img">
-          <img alt="image" loading="lazy" />
-        </div>
-        <div class="wrapper-img">
-          <img alt="image" loading="lazy" />
-        </div>
-      </div>
+      <div class="flex-style imgs-container"></div>
     </div>
   </body>
   <script>
     const searchInput = document.querySelector(".search");
     const searchBtn = document.querySelector(".searchBtn");
-    const imgs = document.querySelectorAll(".imgs-container div img");
-    let urlsArray = [];
-    const corsUrl = "https://cors-anywhere.herokuapp.com/";
-
-    // General Settings
-    const apiKey =
+    const imgsContainer = document.querySelector(".imgs-container");
+    const bearerKey =
       "YFBOmBBPCeZ1fVdk3rS9n13a6sXP3nATAMSb6govIV7vH4qbZ4GWu3t5k7jFIGCW";
-    const options = {
-      method: "GET",
-      headers: {
-        accept: "application/json",
-        Authorization: `Bearer ${apiKey}`,
-      },
-    };
-
     // Search Button Action
     searchBtn.addEventListener("click", () => {
-      fetchAllData();
-    });
-
-    // Reset Images
-    imgs.forEach((item) => {
-      item.src = "";
-      item.style.display = "none";
+      try {
+        fetchData();
+      } catch (error) {
+        console.log("Error:", error.message);
+      }
     });
 
     // Get All Icons
-    async function fetchAllData() {
-      imgs.forEach((item) => {
-        item.src = "";
-        item.style.display = "none";
-      });
-      urlsArray = [];
-      const targetUrl = `https://api.iconfinder.com/v4/icons/search?query=${searchInput.value}&count=10`;
+    async function fetchData() {
       try {
-        await fetch(targetUrl, options)
-          .then((response) => response.json())
-          .then((data) => {
-            console.log(data.icons);
-            data.icons.forEach((item) => {
-              let resultData = item.raster_sizes[6].formats[0].preview_url;
-              urlsArray.push(resultData);
-              for (let i = 0; i < imgs.length; i++) {
-                for (let j = i; j < urlsArray.length; j++) {
-                  imgs[i].src = urlsArray[j];
-                  imgs[i].style.display = "block";
-                  break;
-                }
-              }
-            });
-          })
-          .catch((err) => console.log("Fetch Error:", err.message));
+        const options = {
+          method: "GET",
+          headers: {
+            Accept: "application/json",
+            Authorization:
+              "Bearer YFBOmBBPCeZ1fVdk3rS9n13a6sXP3nATAMSb6govIV7vH4qbZ4GWu3t5k7jFIGCW",
+          },
+        };
+        const response = await fetch(
+          `https://iconfinder-api-auth.herokuapp.com/v4/icons/search?query=${searchInput.value}&count=10`,
+          options
+        );
+        const data = await response.json();
+        // console.log(data);
+        imgsContainer.innerHTML = "";
+        data.icons.map((item) => {
+          let resultData = item.raster_sizes[6].formats[0].preview_url;
+          let resultTags = item.tags[0];
+          createImage(resultData, resultTags);
+        });
       } catch (error) {
         console.log("Try Error:", error.message);
       }
     }
 
-    // Click Image Action
-    imgs.forEach((img) => {
-      img.addEventListener("click", () => {
-        console.log(img.src);
-      });
-    });
+    // Create An Image
+    function createImage(src, alt) {
+      let newImage = document.createElement("img");
+      newImage.setAttribute("src", src);
+      newImage.setAttribute("alt", alt);
+      imgsContainer.appendChild(newImage);
+    }
   </script>
 </html>
